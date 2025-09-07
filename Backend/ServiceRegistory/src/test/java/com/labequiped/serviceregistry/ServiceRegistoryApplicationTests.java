@@ -1,10 +1,10 @@
-package com.labequiped.labequiped;
+package com.labequiped.serviceregistry;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LabequipedApplicationTests {
+class ServiceRegistoryApplicationTests {
 
 	@Test
 	void contextLoads() {

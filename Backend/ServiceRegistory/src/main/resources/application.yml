@@ -1,0 +1,18 @@
+
+
+spring:
+  application:
+    name: ServiceRegistry
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    # service-url:
+    #   defaultZone: http://localhost:8761/eureka/
+  # instance:
+  #   hostname: localhost
+  #   prefer-ip-address: true
+  #   lease-renewal-interval-in-seconds: 10
+  #   lease-expiration-duration-in-seconds: 30
+server:
+  port: 8761
