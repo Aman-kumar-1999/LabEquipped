@@ -8,6 +8,7 @@ public class LabequipedApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LabequipedApplication.class, args);
+		System.out.println("Aplicação iniciada com sucesso!");
 	}
 
 }
