@@ -1,0 +1,18 @@
+
+server:
+  port: 8888
+
+spring:
+  application:
+    name: ConfigServer
+  cloud:
+    config:
+      server:
+        # This is only used for taking configuration file from git hub repositry 
+        git:
+          #uri: https://github.com/Aman-kumar-1999/eqipped_test_micaroservice
+          uri: https://github.com/Aman-kumar-1999/Lab-Equipped-Config-File
+          clone-on-start: true
+        # This is only for puting all configuration file into config server project under resources creare one config folder and then put all config file here only
+        #native:
+          #search-locations: classpath:/config
