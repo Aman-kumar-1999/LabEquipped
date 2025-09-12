@@ -1,3 +1,4 @@
 /.metadata/
 /.vscode/
 /target/
+node_modules/

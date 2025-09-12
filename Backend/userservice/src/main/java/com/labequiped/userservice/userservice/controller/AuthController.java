@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.labequiped.userservice.userservice.security.JwtUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -28,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
+    public <T> ResponseEntity<?> login(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         String password = request.get("password");
 
@@ -38,7 +39,9 @@ public class AuthController {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String token = jwtUtil.generateToken(userDetails.getUsername());
-
-        return ResponseEntity.ok(Map.of("token", token));
+        Map<String,Object> map = new HashMap<>();
+        map.put("token", token);
+        //map.put("user", userDetails);
+        return ResponseEntity.ok(map);
     }
 }

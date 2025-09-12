@@ -1,7 +1,11 @@
 package com.labequiped.userservice.userservice.entities;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +24,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "user_master")
 public class User {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQ_GEN")
     @SequenceGenerator(name = "USER_SEQ_GEN", sequenceName = "USER_SEQ", allocationSize = 1)
@@ -31,9 +36,24 @@ public class User {
     @Column(name = "PASSWORD", nullable = false)
     private String password; // ensure this is stored hashed
 
+    @Column(name = "EMAIL", unique = true, nullable = false)
+	private String email;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "BUSINESS_TYPE")
     private BusinessType businessType;
+
+    @Column(name = "FIRST_NAME", nullable = false)
+    private String firstName;
+
+	@Column(name = "LAST_NAME", nullable = false)
+	private String lastName;
+	
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+	
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
@@ -47,6 +67,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.businessType = businessType;
+        
     }
 
     public Long getId() {
@@ -71,6 +92,46 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Set<Role> getRoles() {
