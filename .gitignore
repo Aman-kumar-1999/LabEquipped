@@ -2,3 +2,6 @@
 /.vscode/
 /target/
 node_modules/
+/.DS_Store/
+FrontEnd/.DS_Store
+FrontEnd/LabEquip/.DS_Store

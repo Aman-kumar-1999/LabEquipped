@@ -4,3 +4,55 @@ spring:
     import: optional:configserver:http://localhost:50000
   profiles:
     active: apigateway
+
+# server:
+#   port: 5001
+# spring:
+#   application:
+#     name: api-gateway
+#   cloud:
+#     gateway:
+#       default-filters:
+#         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      
+#       server:
+#         webflux:   
+#           # This is for dynamic routing using Eureka server
+#           #     discovery:
+#           #       locator:
+#           #         enabled: true
+#           #         lower-case-service-id: true
+
+#           # This is for static routing
+#           globalcors:
+#             cors-configurations:
+#               '[/**]':
+#                   allowedOrigins: "*"
+#                   allowedMethods: "*"
+#                   allowedHeaders: "*"
+#           routes:
+#             - id: user-service
+#               uri: lb://user-service
+#               predicates:
+#                 - Path=/api/auth/**,/api/users/**,/api/roles/**,/api/sidebar
+            
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: "*"
+#     health:
+#       show-details: always
+#   endpoint:
+#     gateway:
+#       access: unrestricted
+#   info:
+#     env:
+#       enabled: true
+  
+
+# info:
+#   app:
+#     name: ${spring.application.name}
+#     description: "API Gateway for Lab Equipped"
+#     version: "1.0.0"

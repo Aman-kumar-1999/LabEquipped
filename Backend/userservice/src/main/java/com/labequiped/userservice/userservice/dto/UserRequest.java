@@ -2,7 +2,7 @@ package com.labequiped.userservice.userservice.dto;
 
 import java.util.Set;
 
-import jakarta.persistence.Column;
+
 
 public class UserRequest {
     private String username;

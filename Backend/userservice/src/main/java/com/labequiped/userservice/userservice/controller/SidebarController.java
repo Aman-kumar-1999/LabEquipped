@@ -18,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/sidebar")
 public class SidebarController {
 
+    
     @Autowired
     private SidebarServiceImpl sidebarService;
 
