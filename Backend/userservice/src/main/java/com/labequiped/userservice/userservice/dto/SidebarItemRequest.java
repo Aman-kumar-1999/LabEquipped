@@ -4,9 +4,9 @@ import com.labequiped.userservice.userservice.entities.BusinessType;
 import java.util.Set;
 
 public class SidebarItemRequest {
-    private String key;
+    private String icon;
     private String label;
-    private String url;
+    private String href;
     private boolean enabled;
     private Set<Long> roleIds; // IDs of roles allowed
     private BusinessType visibleFor;
@@ -14,16 +14,16 @@ public class SidebarItemRequest {
 
     // getters/setters
 
-    public String getKey() {
-        return key;
+    public String getIcon() {
+        return icon;
     }
 
     public String getLabel() {
         return label;
     }
 
-    public String getUrl() {
-        return url;
+    public String getHref() {
+        return href;
     }
 
     public boolean isEnabled() {
@@ -42,16 +42,16 @@ public class SidebarItemRequest {
         return orderIndex;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public void setLabel(String label) {
         this.label = label;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setHref(String href) {
+        this.href = href;
     }
 
     public void setEnabled(boolean enabled) {

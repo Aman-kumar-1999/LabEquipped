@@ -14,14 +14,14 @@ public class SidebarItem {
     @SequenceGenerator(name = "SIDEBAR_SEQ_GEN", sequenceName = "SIDEBAR_SEQ", allocationSize = 1)
     private Long id;
 
-    @Column(name = "ITEM_KEY", nullable = false, unique = true)
-    private String key; // internal key e.g. dashboard, orders, vendors
+    @Column(name = "ICON")
+    private String icon; // internal key e.g. dashboard, orders, vendors
 
     @Column(name = "LABEL", nullable = false)
     private String label; // display label
 
-    @Column(name = "URL")
-    private String url; // target route
+    @Column(name = "href")
+    private String href; // target route
 
     @Column(name = "IS_ENABLED")
     private boolean isEnabled;
@@ -41,13 +41,13 @@ public class SidebarItem {
     public SidebarItem() {
     }
 
-    public SidebarItem(String key, String label, String url, boolean isEnabled) {
-        this.key = key;
+    public SidebarItem(String icon, String label, String href, boolean isEnabled, BusinessType visibleFor, Integer orderIndex) {
+        this.icon = icon;
         this.label = label;
-        this.url = url;
+        this.href = href;
         this.isEnabled = isEnabled;
-        // this.visibleFor = visibleFor;
-        // this.orderIndex = orderIndex;
+        this.visibleFor = visibleFor;
+        this.orderIndex = orderIndex;
     }
 
     public Long getId() {
@@ -58,12 +58,12 @@ public class SidebarItem {
         this.id = id;
     }
 
-    public String getKey() {
-        return key;
+    public String getIcon() {
+        return icon;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public String getLabel() {
@@ -74,20 +74,20 @@ public class SidebarItem {
         this.label = label;
     }
 
-    public String getUrl() {
-        return url;
+    public String getHref() {
+        return href;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setHref(String href) {
+        this.href = href;
     }
 
     public boolean isEnabled() {
         return isEnabled;
     }
 
-    public void setEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 
     public Set<Role> getAllowedRoles() {

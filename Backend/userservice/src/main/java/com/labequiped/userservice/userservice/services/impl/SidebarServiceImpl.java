@@ -71,16 +71,36 @@ public class SidebarServiceImpl implements SidebarService {
 
         return item.getAllowedRoles().stream().map(r -> r.getName()).anyMatch(userRoleNames::contains);
     }
-
+    //Long id, String icon, String label, String href, boolean isEnabled, Set<Role> allowedRoles, BusinessType visibleFor, Integer orderIndex
     private SidebarItemDTO toDto(SidebarItem item) {
-        return new SidebarItemDTO(item.getKey(), item.getLabel(), item.getUrl(), item.getOrderIndex());
+        // return new SidebarItemDTO(
+        //     item.getId(),
+        //     item.getIcon(),
+        //     item.getLabel(),
+        //     item.getHref(),
+        //     item.isEnabled(),
+        //     item.getAllowedRoles().stream().map(Role::getName).collect(Collectors.toSet()),
+        //     item.getVisibleFor(),
+        //     item.getOrderIndex()
+        // );
+        SidebarItemDTO dto = new SidebarItemDTO();
+        dto.setId(item.getId());
+        dto.setIcon(item.getIcon());
+        dto.setLabel(item.getLabel());
+        dto.setHref(item.getHref());
+        dto.setEnabled(item.isEnabled());
+        dto.setAllowedRoles(item.getAllowedRoles());
+        dto.setVisibleFor(item.getVisibleFor());
+        dto.setOrderIndex(item.getOrderIndex());
+        return dto;
+
     }
 
     public SidebarItem createSidebarItem(SidebarItemRequest request) {
         SidebarItem item = new SidebarItem();
-        item.setKey(request.getKey());
+        item.setIcon(request.getIcon());
         item.setLabel(request.getLabel());
-        item.setUrl(request.getUrl());
+        item.setHref(request.getHref());
         item.setEnabled(request.isEnabled());
         item.setVisibleFor(request.getVisibleFor());
         item.setOrderIndex(request.getOrderIndex());
@@ -95,9 +115,9 @@ public class SidebarServiceImpl implements SidebarService {
         SidebarItem item = sidebarRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sidebar item not found"));
 
-        item.setKey(request.getKey());
+        item.setIcon(request.getIcon());
         item.setLabel(request.getLabel());
-        item.setUrl(request.getUrl());
+        item.setHref(request.getHref());
         item.setEnabled(request.isEnabled());
         item.setVisibleFor(request.getVisibleFor());
         item.setOrderIndex(request.getOrderIndex());

@@ -5,9 +5,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import '../../css/admin_dashboard.css'
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/app/Auth/store";
 
 const AdminSidebar = () => {
   const pathname = usePathname();
+  const { menu } = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch();
 
   const navItems = [
     // { href: "/admin/landing", label: "Home", icon: "fa-solid fa-home" },
@@ -27,11 +31,12 @@ const AdminSidebar = () => {
         <span className="fw-bold">Admin Navigation</span>
       </div>
       <nav className="nav flex-column p-2">
-        {navItems.map((item) => {
+        {menu.map((item, index) => {
           const isActive = pathname === item.href;
           return (
             <Link
-              key={item.href}
+              
+              key={item.id}
               href={item.href}
               className={`nav-link x-nav__link ${isActive ? "active" : ""}`}
             >

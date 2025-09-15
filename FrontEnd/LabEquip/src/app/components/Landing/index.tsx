@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import Chart from "chart.js/auto";
 import '../../css/style.css';
 import '../../css/home_page.css';
+import { useDispatch } from "react-redux";
+import { addItem, updateQuantity } from "@/app/Auth/cartSlice";
 
 type User = { name: string } | null;
 type Product = {
@@ -44,6 +46,7 @@ const tableData: Product[] = [
 
 export default function LandingPage() {
 
+   const dispatch = useDispatch();
 
 
   // ---- User state ----
@@ -346,7 +349,22 @@ export default function LandingPage() {
                           $79.00
                         </span>
                         <button className=" x-btn x-btn--primary btn-sm add-to-cart"
-                          data-product-id="CR-SET-A">
+                          data-product-id="CR-SET-A"
+                          onClick={() =>
+                            dispatch(
+                              addItem({
+                                id: '1',
+                                quantity: Math.max(0 - 1, 1),
+                                name: "Beaker",
+                                sku: "CR-SET-A",
+                                price: 0,
+                                stock: 0,
+                                outOfStock: false,
+                                image: "assets/category_image_for_pipettes_an_3_65dfaf00.jpg"
+                              })
+                            )
+                          }
+                        >
                           <i className="fa-solid fa-cart-plus me-1">
                           </i>
                           Add

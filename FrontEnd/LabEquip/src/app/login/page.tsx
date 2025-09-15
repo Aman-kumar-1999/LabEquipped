@@ -8,9 +8,16 @@ import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import Link from "next/link";
 
+
+
+
 export default function LoginPage() {
     const dispatch = useDispatch<AppDispatch>();
-    const { token, loading, error } = useSelector((state: RootState) => state.auth);
+    const { token,
+        user,
+        menu,
+        loading,
+        error } = useSelector((state: RootState) => state.auth);
 
     const router = useRouter();
     const [username, setUsername] = useState("");
@@ -24,19 +31,32 @@ export default function LoginPage() {
     //     if (remembered) setUsername(remembered);
     //   }, []);
 
-    useEffect(() => {
-        if (token) {
-            Swal.fire({
-                icon: "success",
-                title: "Login successful",
-                text: "Redirecting...",
-                timer: 1300,
-                showConfirmButton: false,
-            }).then(() => {
-                router.push("admin/dashboard");
-            });
-        }
-    }, [token, router]);
+    // useEffect(() => {
+    //     if (token) {
+    //         Swal.fire({
+    //             icon: "success",
+    //             title: "Login successful",
+    //             text: "Redirecting...",
+    //             timer: 1300,
+    //             showConfirmButton: false,
+    //         }).then(() => {
+    //             router.push("admin/dashboard");
+    //         });
+    //     }
+    // }, [token, router]);
+
+    // useEffect(() => {
+    //     if (!token || !user) {
+    //         router.push("/login"); // not logged in
+    //     } else {
+    //         const hasAccess = user.roles.some((role) =>
+    //             allowedRoles.includes(role.name.toLowerCase())
+    //         );
+    //         if (!hasAccess) {
+    //             router.push("/unauthorized"); // create a 403 page
+    //         }
+    //     }
+    // }, [token, user, router, allowedRoles]);
 
     // Handle login
     const handleSubmit = (e: React.FormEvent) => {
@@ -45,6 +65,10 @@ export default function LoginPage() {
         //   Swal.fire("Invalid Username", "Please enter a valid username.", "error");
         //   return;
         // }
+        if (!username) {
+            Swal.fire("Missing Username", "Username is required.", "error");
+            return;
+        }
         if (!password) {
             Swal.fire("Missing Password", "Password is required.", "error");
             return;
@@ -52,7 +76,7 @@ export default function LoginPage() {
 
         dispatch(loginUser({ username, password }))
             .unwrap()
-            .then(() => {
+            .then((data) => {
                 if (rememberMe) {
                     localStorage.setItem("demoRememberUsername", username);
                 } else {
@@ -66,12 +90,12 @@ export default function LoginPage() {
                     timer: 1200,
                     showConfirmButton: false,
                 }).then(() => {
-                    // Redirect based on role
-                    //   if (data.role === "admin") {
-                    router.push("/admin/dashboard");
-                    //   } else {
-                    // router.push("/user/dashboard");
-                    //   }
+                    //Redirect based on role
+                    if (data!.user_details!.user!.roles[0]!.name === "SUPER_ADMIN") {
+                        router.push("/admin/dashboard");
+                    } else {
+                        router.push("/user/dashboard");
+                    }
                 });
             })
             .catch(() => {
@@ -79,78 +103,411 @@ export default function LoginPage() {
             });
     };
 
+    // return (
+    //     <main className="auth-hero d-flex align-items-center" id="mainContent">
+    //         <div className="container py-5">
+    //             <div className="row justify-content-center">
+    //                 <div className="col-12 col-sm-10 col-md-8 col-lg-5">
+    //                     <div className="x-card p-4 p-md-5 a-slide-up">
+    //                         <h1 className="h3 fw-bold text-center mb-2">Welcome back</h1>
+    //                         <p className="text-center text-muted mb-4">
+    //                             Sign in to continue to your account
+    //                         </p>
+
+    //                         <form onSubmit={handleSubmit}>
+    //                             <div className="mb-3 x-field">
+    //                                 <label className="form-label x-label" htmlFor="email">
+    //                                     Email address
+    //                                 </label>
+    //                                 <input
+    //                                     className="form-control x-input"
+    //                                     type="text"
+    //                                     value={username}
+    //                                     onChange={(e) => setUsername(e.target.value)}
+    //                                     required
+    //                                 />
+    //                             </div>
+
+    //                             <div className="mb-2 x-field">
+    //                                 <label className="form-label x-label" htmlFor="password">
+    //                                     Password
+    //                                 </label>
+    //                                 <input
+    //                                     className="form-control x-input"
+    //                                     type="password"
+    //                                     value={password}
+    //                                     onChange={(e) => setPassword(e.target.value)}
+    //                                     required
+    //                                 />
+    //                             </div>
+
+    //                             <div className="d-flex justify-content-between align-items-center mb-3">
+    //                                 <div className="form-check">
+    //                                     <input
+    //                                         type="checkbox"
+    //                                         className="form-check-input"
+    //                                         checked={rememberMe}
+    //                                         onChange={(e) => setRememberMe(e.target.checked)}
+    //                                     />
+    //                                     <label className="form-check-label">Remember me</label>
+    //                                 </div>
+    //                                 <Link className="small" href="/forgot-password">
+    //                                     Forgot your password?
+    //                                 </Link>
+    //                             </div>
+
+    //                             <div className="d-grid">
+    //                                 <button
+    //                                     className="x-btn x-btn--primary"
+    //                                     type="submit"
+    //                                     disabled={loading}
+    //                                 >
+    //                                     {loading ? "Signing in..." : "Login"}
+    //                                 </button>
+    //                             </div>
+    //                         </form>
+
+    //                         {error && (
+    //                             <div className="alert alert-danger mt-3">{error}</div>
+    //                         )}
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     </main>
+    // );
+
+
     return (
-        <main className="auth-hero d-flex align-items-center" id="mainContent">
-            <div className="container py-5">
-                <div className="row justify-content-center">
-                    <div className="col-12 col-sm-10 col-md-8 col-lg-5">
-                        <div className="x-card p-4 p-md-5 a-slide-up">
-                            <h1 className="h3 fw-bold text-center mb-2">Welcome back</h1>
-                            <p className="text-center text-muted mb-4">
-                                Sign in to continue to your account
-                            </p>
-
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-3 x-field">
-                                    <label className="form-label x-label" htmlFor="email">
-                                        Email address
-                                    </label>
-                                    <input
-                                        className="form-control x-input"
-                                        type="text"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        required
-                                    />
+        <div>
+            <main className="auth-hero d-flex align-items-center" id="mainContent">
+                <div className="container py-5">
+                    <div className="row justify-content-center">
+                        <div className="col-12 col-sm-10 col-md-8 col-lg-5">
+                            {/* <!-- Login Card --> */}
+                            <div className="x-card p-4 p-md-5 a-slide-up">
+                                <h1 className="h3 fw-bold text-center mb-2">
+                                    Welcome back
+                                </h1>
+                                <p className="text-center text-muted mb-4">
+                                    Sign in to continue to your account
+                                </p>
+                                {/* <div className="mx-5">
+        <img alt="Brand Logo" className="" height="72" src="/images/logo/logo.png" width="72"/>
+       </div> */}
+                                <div className="auth-hero d-flex align-items-center">
+                                    <img alt="Brand Logo" className="container m-4" height="" src="/images/logo/dashboard.png" width="72" />
                                 </div>
 
-                                <div className="mb-2 x-field">
-                                    <label className="form-label x-label" htmlFor="password">
-                                        Password
-                                    </label>
-                                    <input
-                                        className="form-control x-input"
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="d-flex justify-content-between align-items-center mb-3">
-                                    <div className="form-check">
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input"
-                                            checked={rememberMe}
-                                            onChange={(e) => setRememberMe(e.target.checked)}
-                                        />
-                                        <label className="form-check-label">Remember me</label>
+                                {/* <!-- Inline Alert Placeholder --> */}
+                                {error && (
+                                    <div className="alert alert-danger d-none" id="authAlert" role="alert">
+                                        <i className="fa-solid fa-triangle-exclamation me-2">
+                                        </i>
+                                        <span id="authAlertText">
+                                            Invalid credentials. Please try again.{error}
+                                        </span>
                                     </div>
-                                    <Link className="small" href="/forgot-password">
-                                        Forgot your password?
-                                    </Link>
+                                )}
+                                <form id="loginForm"
+                                    //    novalidate=""
+                                    onSubmit={handleSubmit}
+                                >
+                                    {/* <!-- Email --> */}
+                                    <div className="mb-3 x-field">
+                                        <label className="form-label x-label" htmlFor="username">
+                                            Username
+                                        </label>
+                                        <input autoComplete="username" className="form-control x-input"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}
+                                            required
+                                            data-bs-title="Use the username associated with your account"
+                                            data-bs-toggle="tooltip" id="username" name="username" placeholder="your.username"
+                                            type="text" />
+                                        <div className="invalid-feedback">
+                                            Please enter a valid username.
+                                        </div>
+                                    </div>
+                                    {/* <!-- Password with visibility toggle --> */}
+                                    <div className="mb-2 x-field">
+                                        <label className="form-label x-label" htmlFor="password">
+                                            Password
+                                        </label>
+                                        <div className="input-group">
+                                            <input autoComplete="current-password" className="form-control x-input"
+                                                id="password" name="password" placeholder="Enter your password" type="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                            />
+                                            <button aria-label="Show/Hide password" className="btn btn-outline-secondary x-btn--outline" data-bs-title="Show/Hide password" data-bs-toggle="tooltip" id="togglePassword" type="button">
+                                                <i aria-hidden="true" className="fa-solid fa-eye" id="togglePasswordIcon">
+                                                </i>
+                                            </button>
+                                        </div>
+                                        <div className="invalid-feedback">
+                                            Password cannot be empty.
+                                        </div>
+                                    </div>
+                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                        <div className="form-check">
+                                            <input className="form-check-input" id="rememberMe" type="checkbox" value=""
+                                                checked={rememberMe}
+                                                onChange={(e) => setRememberMe(e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor="rememberMe">
+                                                Remember me
+                                            </label>
+                                        </div>
+                                        <Link className="small" href="./verification_page.html">
+                                            Forgot your password?
+                                        </Link>
+                                    </div>
+                                    <div className="d-grid">
+                                        <button className="x-btn x-btn--primary" id="loginBtn" type="submit" disabled={loading || !username || !password}>
+                                            <span className="btn-label">
+                                                Log In
+                                                {loading ? "Signing in..." : "Login"}
+                                            </span>
+                                            <span aria-hidden="true" className="spinner-border spinner-border-sm ms-2 d-none" role="status">
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <p className="text-center mt-3 mb-0">
+                                        Don’t have an account?
+                                        <Link className="x-btn--link" href="/register">
+                                            Sign Up
+                                        </Link>
+                                    </p>
+                                </form>
+                            </div>
+                            {/* <!-- Test Credentials Panel --> */}
+                            <div className="x-card mt-4">
+                                <div className="x-card__header">
+                                    <h2 className="h5 mb-0">
+                                        Test Credentials
+                                    </h2>
                                 </div>
-
-                                <div className="d-grid">
-                                    <button
-                                        className="x-btn x-btn--primary"
-                                        type="submit"
-                                        disabled={loading}
-                                    >
-                                        {loading ? "Signing in..." : "Login"}
-                                    </button>
+                                <div className="x-card__body">
+                                    <p className="mb-3 text-muted">
+                                        Use the following demo accounts to test role-based redirects after login.
+                                    </p>
+                                    <div className="table-responsive">
+                                        <table className="table x-table align-middle mb-2">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">
+                                                        Role
+                                                    </th>
+                                                    <th scope="col">
+                                                        Email
+                                                    </th>
+                                                    <th scope="col">
+                                                        Password
+                                                    </th>
+                                                    <th scope="col">
+                                                        Redirects To
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        Admin
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            admin@site.com
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            Admin@123
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <a href="./admin_dashboard.html">
+                                                            ./admin_dashboard.html
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        B2B Lab Manager
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            manager@org.com
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            Passw0rd!
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <a href="./user_dashboard.html">
+                                                            ./user_dashboard.html
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        B2B Procurement
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            procure@org.com
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            BuyMore#1
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <a href="./user_dashboard.html">
+                                                            ./user_dashboard.html
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        B2C Researcher
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            researcher@lab.com
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            Passw0rd!
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <a href="./user_dashboard.html">
+                                                            ./user_dashboard.html
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        B2C Scientist
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            scientist@lab.com
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            Lab@2024
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <a href="./user_dashboard.html">
+                                                            ./user_dashboard.html
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        Support Admin (read-only)
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            support@site.com
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <code>
+                                                            HelpDesk1!
+                                                        </code>
+                                                    </td>
+                                                    <td>
+                                                        <a href="./admin_dashboard.html">
+                                                            ./admin_dashboard.html
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <small className="text-muted">
+                                        Note: These are demo accounts for front-end validation and routing only. No real authentication is performed.
+                                    </small>
                                 </div>
-                            </form>
-
-                            {error && (
-                                <div className="alert alert-danger mt-3">{error}</div>
-                            )}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
+        // <div className="max-w-md mx-auto mt-20 p-6 bg-gray-900 text-white rounded-xl shadow-lg">
+        //   <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+
+        //   {error && (
+        //     <div className="mb-4 p-3 rounded bg-red-600 text-sm">{error}</div>
+        //   )}
+
+        //   <form onSubmit={handleSubmit} className="space-y-4">
+        //     {/* Email */}
+        //     <div>
+        //       <label htmlFor="email" className="block mb-1 text-sm">
+        //         Email
+        //       </label>
+        //       <input
+        //         type="email"
+        //         id="email"
+        //         className="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none"
+        //         value={email}
+        //         onChange={(e) => setEmail(e.target.value)}
+        //         required
+        //       />
+        //     </div>
+
+        //     {/* Password */}
+        //     <div>
+        //       <label htmlFor="password" className="block mb-1 text-sm">
+        //         Password
+        //       </label>
+        //       <input
+        //         type="password"
+        //         id="password"
+        //         className="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none"
+        //         value={password}
+        //         onChange={(e) => setPassword(e.target.value)}
+        //         required
+        //       />
+        //     </div>
+
+        //     {/* Remember Me */}
+        //     <div className="flex items-center gap-2">
+        //       <input
+        //         type="checkbox"
+        //         id="rememberMe"
+        //         checked={rememberMe}
+        //         onChange={(e) => setRememberMe(e.target.checked)}
+        //       />
+        //       <label htmlFor="rememberMe">Remember me</label>
+        //     </div>
+
+        //     {/* Submit */}
+        //     <button
+        //       type="submit"
+        //       className="w-full py-2 rounded bg-blue-600 hover:bg-blue-700 transition disabled:bg-gray-600"
+        //       disabled={loading || !email || !password}
+        //     >
+        //       {loading ? "Signing in..." : "Login"}
+        //     </button>
+        //   </form>
+
+        //   {/* Footer */}
+        //   <p className="mt-6 text-center text-sm text-gray-400">
+        //     © {new Date().getFullYear()} Lab Equipment E-commerce
+        //   </p>
+        // </div>
     );
 }
 

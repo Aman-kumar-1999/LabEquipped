@@ -1,27 +1,56 @@
 package com.labequiped.userservice.userservice.dto;
 
+import com.labequiped.userservice.userservice.entities.BusinessType;
+import com.labequiped.userservice.userservice.entities.Role;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class SidebarItemDTO {
-    private String key;
-    private String label;
-    private String url;
-    private Integer orderIndex;
+    private Long id;
+
+    private String icon; // internal key e.g. dashboard, orders, vendors
+
+    private String label; // display label
+
+    private String href; // target route
+
+    private boolean isEnabled;
+
+    private Set<Role> allowedRoles = new HashSet<>();
+
+    private BusinessType visibleFor = BusinessType.BOTH; // B2B, B2C, BOTH
+
+    private Integer orderIndex = 0;
 
     public SidebarItemDTO() {
     }
 
-    public SidebarItemDTO(String key, String label, String url, Integer orderIndex) {
-        this.key = key;
+    public SidebarItemDTO(Long id, String icon, String label, String href, boolean isEnabled, Set<Role> allowedRoles, BusinessType visibleFor, Integer orderIndex) {
+        this.id = id;
+        this.icon = icon;
         this.label = label;
-        this.url = url;
+        this.href = href;
+        this.isEnabled = isEnabled;
+        this.allowedRoles = allowedRoles;
+        this.visibleFor = visibleFor;
         this.orderIndex = orderIndex;
     }
 
-    public String getKey() {
-        return key;
+    public Long getId() {
+        return id;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public String getLabel() {
@@ -32,12 +61,36 @@ public class SidebarItemDTO {
         this.label = label;
     }
 
-    public String getUrl() {
-        return url;
+    public String getHref() {
+        return href;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    public Set<Role> getAllowedRoles() {
+        return allowedRoles;
+    }
+
+    public void setAllowedRoles(Set<Role> allowedRoles) {
+        this.allowedRoles = allowedRoles;
+    }
+
+    public BusinessType getVisibleFor() {
+        return visibleFor;
+    }
+
+    public void setVisibleFor(BusinessType visibleFor) {
+        this.visibleFor = visibleFor;
     }
 
     public Integer getOrderIndex() {

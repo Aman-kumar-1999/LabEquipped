@@ -1,29 +1,65 @@
+import axiosInstance from "@/utils/axiosInstance";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+
+// One menu item
+export interface MenuItem {
+  id: number;
+  icon: string;
+  label: string;
+  href: string;
+  allowedRoles: Role[];
+  visibleFor: string;
+  orderIndex: number;
+  enabled: boolean;
+}
+
+// Role type
+export interface Role {
+  id: number;
+  name: string;
+  isEnabled: boolean;
+}
+
+// User type
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  businessType: string;
+  roles: Role[];
+}
+
 interface AuthState {
   token: string | null;
+  user: User | null;
+  menu: MenuItem[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   token: null,
+  user: null,
+  menu: [],
   loading: false,
   error: null,
 };
 
 // Async thunk to call backend login API
 export const loginUser = createAsyncThunk(
-  "auth/loginUser",
+  "auth",
   async (
     { username, password }: { username: string; password: string },
     { rejectWithValue }
   ) => {
     try {
-      const res = await axios.post(`${BASE_URL}/auth/login`, { username, password });
+      const res = await axiosInstance.post(`/auth/login`, { username, password });
       return res.data; // expects { token: "...", role: "admin" }
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
@@ -55,7 +91,17 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
+        state.user = action.payload.user_details.user;
+        state.menu = action.payload.user_details.sidebar;
+
+        // persist token in localStorage if needed
         localStorage.setItem("jwtToken", action.payload.token);
+        cookieStore.set("token", action.payload.token);
+        // Persist user details in localStorage
+        localStorage.setItem("user", JSON.stringify(action.payload.user_details.user));
+        // Persist menu in localStorage
+        localStorage.setItem("menu", JSON.stringify(action.payload.user_details.sidebar));
+
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -64,7 +110,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, isLoginedIn } = authSlice.actions;
 export default authSlice.reducer;
 
 

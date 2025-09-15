@@ -13,6 +13,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
 import './css/style.css';
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
+// import ProtectedRoute from './components/ProtectedRoute';
 
 const font = Poppins({
   subsets: ['latin'],
@@ -51,10 +52,11 @@ export default function RootLayout({
       <body className={`${font.className}`}>
         {/* <Header /> */}
         <Provider  store={store} >
-
-          <HeaderPage />
-          <div style={{ height: "80px" }}></div>
-          {children}
+          {/* <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN"]}> */}
+            <HeaderPage />
+            <div style={{ height: "80px" }}></div>
+            {children}
+          {/* </ProtectedRoute> */}
           <FooterPage />
         </Provider>
 
