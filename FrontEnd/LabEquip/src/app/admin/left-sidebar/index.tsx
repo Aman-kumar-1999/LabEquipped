@@ -26,11 +26,11 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <aside aria-label="Admin navigation" className="admin-sidebar x-card" id="adminSidebar">
+    <aside aria-label="Admin navigation" className="admin-sidebar x-card d-none d-md-block" id="adminSidebar">
       <div className="p-3 border-bottom">
         <span className="fw-bold">Admin Navigation</span>
       </div>
-      <nav className="nav flex-column p-2">
+      <nav className="nav flex-column p-2 ">
         {menu.map((item, index) => {
           const isActive = pathname === item.href;
           return (
