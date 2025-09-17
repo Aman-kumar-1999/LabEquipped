@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
@@ -13,7 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "role_master")
-public class Role {
+public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ROLE_SEQ_GEN")
     @SequenceGenerator(name = "ROLE_SEQ_GEN", sequenceName = "ROLE_SEQ", allocationSize = 1)

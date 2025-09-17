@@ -1,5 +1,6 @@
 package com.labequiped.userservice.userservice.entities;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +24,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user_master")
-public class User {
+public class User implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQ_GEN")

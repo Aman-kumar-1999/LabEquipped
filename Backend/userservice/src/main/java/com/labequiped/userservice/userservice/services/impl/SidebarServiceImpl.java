@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.labequiped.userservice.userservice.dto.SidebarItemDTO;
@@ -42,6 +45,7 @@ public class SidebarServiceImpl implements SidebarService {
     /**
      * Build sidebar for given user: filter items by user's roles and businessType.
      */
+
     public List<SidebarItemDTO> getSidebarForUser(User user) {
         // eager roles on user entity, so user.getRoles() is available
         Set<String> userRoleNames = user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet());
@@ -96,6 +100,7 @@ public class SidebarServiceImpl implements SidebarService {
 
     }
 
+    @CachePut(value = "sidebarCache", key = "#result.id")
     public SidebarItem createSidebarItem(SidebarItemRequest request) {
         SidebarItem item = new SidebarItem();
         item.setIcon(request.getIcon());
@@ -111,6 +116,7 @@ public class SidebarServiceImpl implements SidebarService {
         return sidebarRepository.save(item);
     }
 
+    @CachePut(value = "sidebarCache", key = "#result.id")
     public SidebarItem updateSidebarItem(Long id, SidebarItemRequest request) {
         SidebarItem item = sidebarRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sidebar item not found"));
@@ -128,6 +134,7 @@ public class SidebarServiceImpl implements SidebarService {
         return sidebarRepository.save(item);
     }
 
+    @CacheEvict(value = "sidebarCache", key = "#id")
     public void deleteSidebarItem(Long id) {
         sidebarRepository.deleteById(id);
     }
@@ -137,6 +144,7 @@ public class SidebarServiceImpl implements SidebarService {
                 .orElseThrow(() -> new RuntimeException("Sidebar item not found"));
     }
 
+    @Cacheable(value = "sidebarCache")
     public List<SidebarItem> getAllSidebarItems() {
         return sidebarRepository.findAll();
     }

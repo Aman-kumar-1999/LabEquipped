@@ -2,12 +2,14 @@ package com.labequiped.userservice.userservice.entities;
 
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;
 
 @Entity
 @Table(name = "SIDEBAR_ITEM")
-public class SidebarItem {
+public class SidebarItem implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SIDEBAR_SEQ_GEN")

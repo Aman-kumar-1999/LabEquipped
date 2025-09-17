@@ -3,10 +3,11 @@ package com.labequiped.userservice.userservice.dto;
 import com.labequiped.userservice.userservice.entities.BusinessType;
 import com.labequiped.userservice.userservice.entities.Role;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SidebarItemDTO {
+public class SidebarItemDTO implements Serializable {
     private Long id;
 
     private String icon; // internal key e.g. dashboard, orders, vendors

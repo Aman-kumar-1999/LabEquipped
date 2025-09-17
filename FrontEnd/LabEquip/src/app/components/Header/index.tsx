@@ -7,16 +7,18 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../Auth/store";
 import { isLoginedIn, logout } from "../../Auth/authSlice"; // ✅ logout action
+import Tooltip from "@mui/material/Tooltip";
 
 export default function HeaderPage() {
   const [sticky, setSticky] = useState(false);
 
-  const { token } = useSelector((state: RootState) => state.auth);
-  const { items, role } = useSelector((state: RootState) => state.cart);
+  // const { token , user} = useSelector((state: RootState) => state.auth);
+  const { items } = useSelector((state: RootState) => state.cart);
+  const { token, menu, user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(isLoginedIn()); // ✅ check login status on mount
+    //dispatch(isLoginedIn()); // ✅ check login status on mount
     //console.log("Token in Header:", token); // Debugging line
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -128,16 +130,23 @@ export default function HeaderPage() {
             <div className="d-flex align-items-center gap-2">
               {/* 🔹 If NOT logged in */}
               {!token && (
-                <div className="d-flex gap-2" id="guestActions">
-                  <Link className=" x-btn x-btn--primary" href="/login">
+                <div className="d-flex gap-2" >
+                  
+                  <Tooltip title="Login">
+                    <Link className="x-btn x-btn--secondary" href="/login">
                     <i className="fa-solid fa-right-to-bracket me-1"></i>
-                    Login
-                  </Link>
+
+                    </Link>
+                  </Tooltip>
+
+                  
                   &nbsp;
+                  <Tooltip title="Register">
                   <Link className=" x-btn x-btn--secondary" href="/register">
                     <i className="fa-solid fa-user-plus me-1"></i>
-                    Register
+                    {/* Register */}
                   </Link>
+                  </Tooltip>
                 </div>
               )}
 
@@ -145,80 +154,92 @@ export default function HeaderPage() {
               &nbsp;
               {token && (
                 <>
-                <Link aria-label="View cart" className="btn x-btn x-btn--secondary position-relative"
-                    href="/cart" id="cartBtn">
-                    <i className="fa-solid fa-cart-shopping">
-                    </i>
-                    <span className="">
-                        Cart
-                    </span>
+                <Tooltip title="My Account">
+                <span className="text-black"> Welcome to, &nbsp;
+                  {user?.roles[0]?.name === "SUPER_ADMIN" ? "Admin" : "User"} Page
+                </span>
+                </Tooltip>
+                <Tooltip title="Cart">
+                  <Link aria-label="View cart" className="btn x-btn x-btn--secondary position-relative"
+                      href="/cart" id="cartBtn">
+                      <i className="fa-solid fa-cart-shopping">
+                      </i>
+                      {/* <span className="">
+                          Cart
+                      </span> */}
 
-                    <span
-                        className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary"
-                        id="cartCountBadge">
-                            {items.length}
-                            {/* 0 */}
-                            {/* {localStorage.getItem("cartCount") ? JSON.parse(localStorage.getItem("cartCount") || '[]').length : 0} */}
-                        </span>
-                </Link>
+                      <span
+                          className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary"
+                          id="cartCountBadge">
+                              {items.length}
+                             
+                          </span>
+                  </Link>
+                </Tooltip>
                 
-                <div className="dropdown" id="userMenu">
-                  <button
-                    aria-expanded="false"
-                    className="btn x-btn x-btn--secondary dropdown-toggle"
-                    data-bs-toggle="dropdown"
-                    id="userMenuButton"
-                    type="button"
-                  >
-                    <i className="fa-solid fa-user-circle me-1"></i>
-                    <span id="userNameLabel">My Account</span>
-                  </button>
-                  <ul
-                    aria-labelledby="userMenuButton"
-                    className="dropdown-menu dropdown-menu-end x-menu__list"
-                  >
-                    <li>
-                      <Link
-                        className="dropdown-item x-menu__item"
-                        href="/admin/dashboard"
-                      >
-                        <i className="fa-solid fa-gauge-high"></i>
-                        <span className="ms-2">Dashboard</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        className="dropdown-item x-menu__item"
-                        href="/admin/orders/history"
-                      >
-                        <i className="fa-solid fa-box"></i>
-                        <span className="ms-2">Order History</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        className="dropdown-item x-menu__item"
-                        href="/account/settings"
-                      >
-                        <i className="fa-solid fa-gear"></i>
-                        <span className="ms-2">Account Settings</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                      <button
-                        onClick={handleLogout}
-                        className="dropdown-item x-menu__item"
-                        id="logoutBtn"
-                      >
-                        <i className="fa-solid fa-arrow-right-from-bracket"></i>
-                        <span className="ms-2">Logout</span>
-                      </button>
-                    </li>
-                  </ul>
-                </div>
+                
+                &nbsp;
+                <Tooltip title="My Account">
+                  <div className="dropdown" id="userMenu">
+                    <button
+                      aria-expanded="false"
+                      className="btn x-btn x-btn--secondary dropdown-toggle btn-sm"
+                      data-bs-toggle="dropdown"
+                      id="userMenuButton"
+                      type="button"
+                    >
+                      <i className="fa-solid fa-user-circle me-1"></i>
+                      {/* <span id="userNameLabel">My Account</span> */}
+                    </button>
+                    <ul
+                      aria-labelledby="userMenuButton"
+                      className="dropdown-menu dropdown-menu-end x-menu__list"
+                    >
+                      <li>
+                        <Link
+                          className="dropdown-item x-menu__item"
+                          href="/admin/dashboard"
+                        >
+                          <i className="fa-solid fa-gauge-high"></i>
+                          <span className="ms-2">Dashboard</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className="dropdown-item x-menu__item"
+                          href="/admin/orders/history"
+                        >
+                          <i className="fa-solid fa-box"></i>
+                          <span className="ms-2">Order History</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className="dropdown-item x-menu__item"
+                          href="/account/settings"
+                        >
+                          <i className="fa-solid fa-gear"></i>
+                          <span className="ms-2">Account Settings</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <hr className="dropdown-divider" />
+                      </li>
+                      <li>
+                        <button
+                          onClick={handleLogout}
+                          className="dropdown-item x-menu__item"
+                          id="logoutBtn"
+                        >
+                          <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                          <span className="ms-2">Logout</span>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </Tooltip>
+                
+                
                 </>
               )}
             </div>

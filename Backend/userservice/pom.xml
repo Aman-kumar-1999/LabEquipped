@@ -35,29 +35,53 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+        <!-- for Config Server connection as client   Start -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
+        <!-- for Config Server connection as client   End -->
+
+        <!-- for Eureka server Registry as client   Start -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
+        <!-- for Eureka server Registry as client   End -->
 
+        <!-- for JPA Driver   Start -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+        <!-- for JPA Driver   End -->
 
+        <!-- for Oracle database Driver   Start -->
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc8</artifactId>
 		</dependency>
+        <!-- for Oracle database Driver   End -->
 
-		<dependency>
+
+        <!-- for redis data caching   Start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <!-- for redis data caching   End -->
+
+        <!--  For JWT Token Start -->
+        <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
@@ -76,6 +100,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
+        <!--  For JWT Token End -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
