@@ -232,7 +232,11 @@ a:focus-visible {
     outline-offset: 3px;
     border-radius: 4px
 }
-
+.active-correntpate{
+    background: var(--primary-50);
+    color: var(--text);
+    font-weight: 700
+}
 /* 4) Accessibility Helpers */
 .sr-only {
     position: absolute !important;

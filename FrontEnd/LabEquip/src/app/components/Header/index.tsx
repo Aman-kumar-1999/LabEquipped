@@ -8,8 +8,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../Auth/store";
 import { isLoginedIn, logout } from "../../Auth/authSlice"; // ✅ logout action
 import Tooltip from "@mui/material/Tooltip";
+import { usePathname } from "next/dist/client/components/navigation";
 
 export default function HeaderPage() {
+  const pathname = usePathname();
   const [sticky, setSticky] = useState(false);
 
   // const { token , user} = useSelector((state: RootState) => state.auth);
@@ -77,7 +79,7 @@ export default function HeaderPage() {
             </form>
 
 
-          <button
+          {/* <button
             aria-controls="primaryNav"
             aria-expanded="true"
             aria-label="Toggle navigation"
@@ -87,11 +89,11 @@ export default function HeaderPage() {
             type="button"
           >
             <span className="navbar-toggler-icon"></span>
-          </button>
+          </button> */}
 
           
 
-          <div className="collapse navbar-collapse" id="primaryNav">
+          <div className="" id="">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0 x-nav"></ul>
 
             {/* Search */}
@@ -154,11 +156,11 @@ export default function HeaderPage() {
               &nbsp;
               {token && (
                 <>
-                <Tooltip title="My Account">
-                <span className="text-black"> Welcome to, &nbsp;
-                  {user?.roles[0]?.name === "SUPER_ADMIN" ? "Admin" : "User"} Page
-                </span>
-                </Tooltip>
+                {/* <Tooltip title="My Account"> */}
+                {/* <span className="text-black"> Welcome {user?.firstName}, &nbsp;
+                  {user?.roles[0]?.name === "SUPER_ADMIN" ? "Admin" : "User"} Role
+                </span> */}
+                {/* </Tooltip> */}
                 <Tooltip title="Cart">
                   <Link aria-label="View cart" className="btn x-btn x-btn--secondary position-relative"
                       href="/cart" id="cartBtn">
@@ -195,33 +197,26 @@ export default function HeaderPage() {
                       aria-labelledby="userMenuButton"
                       className="dropdown-menu dropdown-menu-end x-menu__list"
                     >
-                      <li>
-                        <Link
-                          className="dropdown-item x-menu__item"
-                          href="/admin/dashboard"
-                        >
-                          <i className="fa-solid fa-gauge-high"></i>
-                          <span className="ms-2">Dashboard</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="dropdown-item x-menu__item"
-                          href="/admin/orders/history"
-                        >
-                          <i className="fa-solid fa-box"></i>
-                          <span className="ms-2">Order History</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="dropdown-item x-menu__item"
-                          href="/account/settings"
-                        >
-                          <i className="fa-solid fa-gear"></i>
-                          <span className="ms-2">Account Settings</span>
-                        </Link>
-                      </li>
+                      {menu.map((item, index) => {
+                          const isActive = pathname === item.href;
+                          return (
+                            <li  key={item.id}>
+                            { item.enabled == true && <Link
+                              
+                              key={item.id}
+                              href={item.href}
+                              className={`x-menu__item nav-link x-nav__link ${isActive ? "active-correntpate" : ""}`}
+                            >
+                              <i className={`${item.icon} me-2`} />
+                              <span className="link-label">{item.label}</span>
+                            </Link>
+                            
+                            }
+                            
+                            </li>
+                          );
+                        })}
+                      
                       <li>
                         <hr className="dropdown-divider" />
                       </li>
@@ -238,6 +233,17 @@ export default function HeaderPage() {
                     </ul>
                   </div>
                 </Tooltip>
+                <Tooltip title="Logout">
+                    <button
+                          onClick={handleLogout}  
+                          className="btn x-btn x-btn--secondary position-relative"
+                          id="logoutBtn"
+                        >
+                          <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                          {/* <span className="ms-2">Logout</span> */}
+                        </button>
+                  </Tooltip>
+
                 
                 
                 </>
