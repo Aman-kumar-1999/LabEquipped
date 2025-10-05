@@ -172,8 +172,10 @@ export default function CartPage() {
                                                 <div className="row g-3 align-items-center">
                                                     <div className="col-3 col-md-2">
                                                         <img alt="Precision Pipette image" className="img-fluid rounded cart-thumb"
-                                                            //onerror="this.onerror=null;this.src='https://picsum.photos/seed/labpipette/300/200';"
-                                                            src={item.image} />
+                                                           
+                                                            // src={item.image} 
+                                                            
+                                                            />
                                                     </div>
                                                     <div className="col-9 col-md-5">
                                                         <h3 className="h6 mb-1">

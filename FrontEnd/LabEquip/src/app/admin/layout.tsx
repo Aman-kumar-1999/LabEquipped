@@ -10,7 +10,7 @@ export default function AdminLayout({
 
     return (<>
         <main className="mx-4 my-4" id="main">
-            <ProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+            <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN"]}>
                 <div className="container-fluid">
                     <div className="row g-4 admin-layout">
                         <div className="col-12 col-lg-2">

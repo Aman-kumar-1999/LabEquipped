@@ -91,10 +91,12 @@ export default function LoginPage() {
                     showConfirmButton: false,
                 }).then(() => {
                     //Redirect based on role
-                    if (data!.user_details!.user!.roles[0]!.name === "SUPER_ADMIN") {
+                    if (data!.user_details!.user!.roles[0]!.name === "SUPER_ADMIN" || data!.user_details!.user!.roles[0]!.name === "ADMIN") {
                         router.push("/admin/dashboard");
+                    } else if (data!.user_details!.user!.roles[0]!.name === "VENDOR") {
+                        router.push("/vendor/product");
                     } else {
-                        router.push("/user/dashboard");
+                        router.push("/user/product");
                     }
                 });
             })
@@ -223,7 +225,7 @@ export default function LoginPage() {
                                             onChange={(e) => setUsername(e.target.value)}
                                             required
                                             data-bs-title="Use the username associated with your account"
-                                            data-bs-toggle="tooltip" id="username" name="username" placeholder="your.username"
+                                            data-bs-toggle="tooltip" id="username" name="username" placeholder="Enter your username"
                                             type="text" />
                                         <div className="invalid-feedback">
                                             Please enter a valid username.

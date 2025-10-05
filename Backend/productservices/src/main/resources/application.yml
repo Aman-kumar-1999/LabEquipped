@@ -1,1 +1,47 @@
-spring.application.name=productservices
+
+#   To Gating the Product Service configuration file from the config server
+#--------------------------------------------------------------------------------------------------
+
+spring:
+  config:
+    import: optional:configserver:http://localhost:50000  # test
+  profiles:
+    active: product
+
+
+
+
+#To Gating the Product Service configuration file from local file
+#--------------------------------------------------------------------------------------------------
+
+## Eqipped product Service
+#server:
+#  port: 5004
+#
+## Eureka start
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#
+## Spring Start
+#spring:
+#  application:
+#    name: PRODUCT-SERVICE
+#
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
+#    mongodb:
+#      uri: mongodb://admin:admin123@localhost:27017/labequiped?authSource=admin
+#      database: labequiped
+
+
+
+
+

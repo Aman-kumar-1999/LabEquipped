@@ -100,8 +100,12 @@ const authSlice = createSlice({
         cookieStore.set("token", action.payload.token);
         // Persist user details in localStorage
         localStorage.setItem("user", JSON.stringify(action.payload.user_details.user));
+        console.log("user Details from login:", action.payload.user_details);
+        console.log("User from login:", action.payload.user_details.user);
+        
         // Persist menu in localStorage
         localStorage.setItem("menu", JSON.stringify(action.payload.user_details.sidebar));
+        console.log("Menu from login:", action.payload.user_details.sidebar);
 
       })
       .addCase(loginUser.rejected, (state, action) => {

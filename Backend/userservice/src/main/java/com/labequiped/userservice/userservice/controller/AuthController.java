@@ -46,7 +46,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Cacheable(value = "loginCache", key = "#request['username']")
+//    @Cacheable(value = "loginCache", key = "#request['username']")
+    @CachePut(value = "loginCache", key = "#request['username']")
     public <T> AuthResponse login(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         String password = request.get("password");
