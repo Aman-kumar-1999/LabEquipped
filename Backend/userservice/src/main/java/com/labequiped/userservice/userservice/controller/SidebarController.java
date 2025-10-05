@@ -22,6 +22,7 @@ public class SidebarController {
     @Autowired
     private SidebarServiceImpl sidebarService;
 
+
     @PostMapping
     public ResponseEntity<SidebarItem> createSidebarItem(@RequestBody SidebarItemRequest request) {
         return ResponseEntity.ok(sidebarService.createSidebarItem(request));
@@ -33,8 +34,8 @@ public class SidebarController {
         return ResponseEntity.ok(sidebarService.updateSidebarItem(id, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSidebarItem(@PathVariable Long id) {
+    @DeleteMapping
+    public ResponseEntity<String> deleteSidebarItem(@RequestParam Long id) {
         sidebarService.deleteSidebarItem(id);
         return ResponseEntity.ok("Sidebar item deleted successfully");
     }

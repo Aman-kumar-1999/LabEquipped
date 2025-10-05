@@ -1,1 +1,121 @@
-spring.application.name=productservice
+
+#spring:
+#  config:
+#    import: optional:configserver:http://localhost:50000  # test
+#  profiles:
+#    active: product
+
+# Eqipped product Service
+server:
+  port: 5004
+
+# Eureka start
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      #defaultZone: http://13.233.173.112:5000/eureka
+      defaultZone: http://localhost:8761/eureka
+# Eureka End
+# project:
+#   image: https://eqipped.com/image/
+#   # upload: D:\\eqipped\\eqipped_image
+#   upload: /var/www/html/image
+
+# Spring Start
+spring:
+  application:
+    name: PRODUCT-SERVICE
+  # kafka:
+  #   bootstrap-servers: localhost:9092
+  #   consumer:
+  #     group-id: product-service-group
+  #     auto-offset-reset: earliest
+  #   producer:
+  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  #     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  #   consumer:
+  #     key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  #     value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  #     properties:
+  #       spring.json.trusted.packages: "*"
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+    mongodb:
+      uri: mongodb://admin:admin123@localhost:27017/labequiped?authSource=admin
+      database: labequiped
+    # mongodb:
+    #   uri: mongodb://admin:gsk3E1ZwjWwgqAoC@cluster0-shard-00-00.9xkoq.mongodb.net:27017,cluster0-shard-00-01.9xkoq.mongodb.net:27017,cluster0-shard-00-02.9xkoq.mongodb.net:27017/?replicaSet=atlas-ndnizx-shard-0&ssl=true&authSource=admin
+    #   database: eqipped_new
+  # servlet:
+  #   multipart:
+  #     enabled: true
+  #     max-file-size: 10MB
+  #     max-request-size: 10MB
+
+  #   config:
+  #     import: optional:configserver:http://localhost:5001
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: gearloose.lab@gmail.com
+    password: jijknjiwmvygfrqs
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+# Spring End
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+  endpoint:
+    health:
+      show-details: always
+
+
+# Start Circuit Breakers through resilience4j server (if another service or server has down then it will return our circiut breakers methods)
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      ratingHotelBreaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 6s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+
+  # Retry Server through resilience4j server (if server is trying multipule time to connect to another server of another server is down then it will return to our methods)
+  retry:
+    instances:
+      ratingHotelService:
+        max-attempts: 3
+        wait-duration: 5s
+
+  # Rate Limiter
+  ratelimiter:
+    instances:
+      userRateLimiter:
+        limit-refresh-period: 4s
+        limit-for-period: 2
+        timeout-duration: 2s

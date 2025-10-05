@@ -8,8 +8,12 @@ import Swal from "sweetalert2";
 import Chart from "chart.js/auto";
 import '../../css/style.css';
 import '../../css/home_page.css';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItem, updateQuantity } from "@/app/Auth/cartSlice";
+import { fetchProducts } from "@/app/Auth/productSlice";
+import { AppDispatch, RootState } from "@/app/Auth/store";
+import { FeaturedProducts } from "../FeaturedProducts";
+import { Products } from "@/app/types/api";
 
 type User = { name: string } | null;
 type Product = {
@@ -44,10 +48,12 @@ const tableData: Product[] = [
 ];
 
 
+
+
 export default function LandingPage() {
 
-   const dispatch = useDispatch();
-
+  const dispatch = useDispatch<AppDispatch>();
+  // 
 
   // ---- User state ----
   const [user, setUser] = useState<User>(null);
@@ -166,10 +172,39 @@ export default function LandingPage() {
   });
   const pageData = sorted.slice((page - 1) * pageSize, page * pageSize);
 
+  // Access state from Redux store
+  const { items, loading, error } = useSelector(
+    (state: RootState) => state.products
+  );
+
+  //const dispatch = useDispatch();
+  //const { product, loading, error } = useSelector((state: any) => state.product);
+
+  useEffect(() => {
+    if (items.length === 0) {
+      dispatch(fetchProducts({ page: 0, size: 5, sortBy: "productName", sortDir: "ASC" }));
+    }
+  }, [dispatch]);
+
+  if (loading) return <p>Loading product...</p>;
+  // if (error) return <p>Error: {typeof error === "string" ? error : "An error occurred."}</p>;
+  if (!items) return <p>No product found</p>;
+
+  const handleAddToCart1 = (product: Products) => {
+    console.log('Adding to cart:', product.productName);
+    // TODO: Integrate with cart API
+  };
+
+  const handleViewProduct = (product: Products) => {
+    console.log('Viewing product:', product.productName);
+    // TODO: Navigate to product detail page
+  };
+
   return (
 
 
     <main style={{ marginTop: "-80px" }} className="pb-5" id="main">
+
       {/* <div aria-atomic="true" aria-live="polite" className="x-toast-stack" id="toastStack">
       </div> */}
       {/* <!-- Hero Section (Bootstrap Carousel) --> */}
@@ -314,9 +349,12 @@ export default function LandingPage() {
               </div>
             </a>
           </div>
+
         </div>
       </section>
       {/* <!-- Featured Products (Carousel multi-card) --> */}
+
+
       <section className="l-container my-5">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h3 className="mb-0">
@@ -326,199 +364,83 @@ export default function LandingPage() {
             View More
           </a>
         </div>
+
         <div className="carousel slide" data-bs-ride="carousel" id="featuredProductsCarousel">
           <div className="carousel-inner">
             <div className="carousel-item active">
               <div className="row g-4">
-                <div className="col-12 col-md-4">
-                  <div className="card product-card h-100">
-                    <a className="text-reset" href="./product_details.html?sku=CR-SET-A">
-                      <img alt="Chemical Reagent Set A" className="card-img-top"
-
-                        src="assets/featured_product_image_for_a_c_1_e61758df.jpg" />
-                    </a>
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title mb-1">
-                        Chemical Reagent Set A
-                      </h5>
-                      <p className="text-muted mb-2">
-                        Reagents
-                      </p>
-                      <div className="mt-auto d-flex justify-content-between align-items-center">
-                        <span className="fw-bold">
-                          $79.00
-                        </span>
-                        <button className=" x-btn x-btn--primary btn-sm add-to-cart"
-                          data-product-id="CR-SET-A"
-                          onClick={() =>
-                            dispatch(
-                              addItem({
-                                id: '1',
-                                quantity: Math.max(0 - 1, 1),
-                                name: "Beaker",
-                                sku: "CR-SET-A",
-                                price: 0,
-                                stock: 0,
-                                outOfStock: false,
-                                image: "assets/category_image_for_pipettes_an_3_65dfaf00.jpg"
-                              })
-                            )
-                          }
-                        >
-                          <i className="fa-solid fa-cart-plus me-1">
-                          </i>
-                          Add
-                        </button>
-                      </div>
-                    </div>
+                {loading ? <p>Loading product...</p> :
+                  error ? <p>Error: {typeof error === "string" ? error : "An error occurred."}</p> :
+                  !items ? <p>No product found</p> : null
+                }
+                {items.map((product: any) => (
+                  <div key={product.productId} className="col-12 col-md-4">
+                  <FeaturedProducts key={product.productId} 
+                    product={product}
+                    onAddToCart={() => handleAddToCart1(product)}
+                    onViewProduct={handleViewProduct}
+                  />
                   </div>
-                </div>
-                <div className="col-12 col-md-4">
-                  <div className="card product-card h-100">
-                    <a className="text-reset" href="./product_details.html?sku=PIP-P200">
-                      <img alt="High-Precision Pipette P200" className="card-img-top"
+                  // <li key={product.productId} className="border p-2 my-1">
+                  //   {product.productName} — {product.vendorName}
+                  // </li>
+                  // <div key={product.productId} className="col-12 col-md-4">
+                  //   <div className="card product-card h-100">
+                  //     <a className="text-reset" href="./product_details.html?sku=CR-SET-A">
+                  //       <img alt="Chemical Reagent Set A" className="card-img-top"
 
-                        src="assets/category_image_for_pipettes_an_3_65dfaf00.jpg" />
-                    </a>
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title mb-1">
-                        High‑Precision Pipette P200
-                      </h5>
-                      <p className="text-muted mb-2">
-                        Pipettes
-                      </p>
-                      <div className="mt-auto d-flex justify-content-between align-items-center">
-                        <span className="fw-bold">
-                          $129.00
-                        </span>
-                        <button className=" x-btn x-btn--primary btn-sm add-to-cart"
-                          data-product-id="PIP-P200">
-                          <i className="fa-solid fa-cart-plus me-1">
-                          </i>
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-4">
-                  <div className="card product-card h-100">
-                    <a className="text-reset" href="./product_details.html?sku=MIC-X200">
-                      <img alt="Compound Microscope X‑200" className="card-img-top"
+                  //         src="assets/featured_product_image_for_a_c_1_e61758df.jpg" />
 
-                        src="assets/hero_image_for_biotechnology_e_2_23e5f4e0.jpg" />
-                    </a>
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title mb-1">
-                        Compound Microscope X‑200
-                      </h5>
-                      <p className="text-muted mb-2">
-                        Microscopes
-                      </p>
-                      <div className="mt-auto d-flex justify-content-between align-items-center">
-                        <span className="fw-bold">
-                          $1,299.00
-                        </span>
-                        <button className=" x-btn x-btn--primary btn-sm add-to-cart"
-                          data-product-id="MIC-X200">
-                          <i className="fa-solid fa-cart-plus me-1">
-                          </i>
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  //     </a>
+
+                  //     <div className="card-body d-flex flex-column">
+                  //       <h5 className="card-title mb-1">
+
+                  //         {product.productName}
+                  //       </h5>
+                  //       <p className="text-muted mb-2">
+
+                  //         {product.category}
+                  //       </p>
+                  //       <div className="mt-auto d-flex justify-content-between align-items-center">
+                  //         <span className="fw-bold">
+
+                  //           ₹ {product.individualProductPrice}
+                  //         </span>
+                  //         <button className=" x-btn x-btn--primary btn-sm add-to-cart"
+                  //           data-product-id="CR-SET-A"
+                  //           onClick={() =>
+                  //             dispatch(
+                  //               addItem({
+                  //                 id: `${product.productId}`,
+                  //                 quantity: product.productQuantity,
+                  //                 name: `${product.productName}`,
+                  //                 sku: `${product.status}`,
+                  //                 price: product.individualProductPrice,
+                  //                 stock: product.productQuantity <= 0 ? 0 : 10,
+                  //                 outOfStock: product.productQuantity >= 0 ? true : false,
+                  //                 image: `${product.imagePath}`
+                  //               })
+                  //             )
+                  //           }
+                  //         >
+                  //           <i className="fa-solid fa-cart-plus me-1">
+                  //           </i>
+                  //           Add
+                  //         </button>
+                  //       </div>
+                  //     </div>
+                  //   </div>
+                  // </div>
+                ))}
               </div>
             </div>
-            <div className="carousel-item">
+            {/* <div className="carousel-item active">
               <div className="row g-4">
-                <div className="col-12 col-md-4">
-                  <div className="card product-card h-100">
-                    <a className="text-reset" href="./product_details.html?sku=BAL-01MG">
-                      <img alt="Analytical Balance 0.1mg" className="card-img-top"
-
-                        src="assets/hero_image_for_biotechnology_e_5_bff6e617.jpg" />
-                    </a>
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title mb-1">
-                        Analytical Balance 0.1mg
-                      </h5>
-                      <p className="text-muted mb-2">
-                        Balances
-                      </p>
-                      <div className="mt-auto d-flex justify-content-between align-items-center">
-                        <span className="fw-bold">
-                          $899.00
-                        </span>
-                        <button className=" x-btn x-btn--primary btn-sm add-to-cart"
-                          data-product-id="BAL-01MG">
-                          <i className="fa-solid fa-cart-plus me-1">
-                          </i>
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-4">
-                  <div className="card product-card h-100">
-                    <a className="text-reset" href="./product_details.html?sku=CEN-MINI">
-                      <img alt="Centrifuge MiniSpin" className="card-img-top"
-
-                        src="assets/hero_image_for_research_and_di_2_0e55544b.jpg" />
-                    </a>
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title mb-1">
-                        Centrifuge MiniSpin
-                      </h5>
-                      <p className="text-muted mb-2">
-                        Centrifuges
-                      </p>
-                      <div className="mt-auto d-flex justify-content-between align-items-center">
-                        <span className="fw-bold">
-                          $499.00
-                        </span>
-                        <button className=" x-btn x-btn--primary btn-sm add-to-cart"
-                          data-product-id="CEN-MINI">
-                          <i className="fa-solid fa-cart-plus me-1">
-                          </i>
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-4">
-                  <div className="card product-card h-100">
-                    <a className="text-reset" href="./product_details.html?sku=GBE-SET">
-                      <img alt="Glass Beaker Set" className="card-img-top"
-
-                        src="assets/category_image_for_lab_glasswa_3_29c5dfb1.jpg" />
-                    </a>
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title mb-1">
-                        Glass Beaker Set
-                      </h5>
-                      <p className="text-muted mb-2">
-                        Glassware
-                      </p>
-                      <div className="mt-auto d-flex justify-content-between align-items-center">
-                        <span className="fw-bold">
-                          $39.00
-                        </span>
-                        <button className=" x-btn x-btn--primary btn-sm add-to-cart"
-                          data-product-id="GBE-SET">
-                          <i className="fa-solid fa-cart-plus me-1">
-                          </i>
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                
               </div>
-            </div>
+            </div> */}
+            {/* <!-- More carousel-item divs for additional slides --> */}
           </div>
           <button
             className="carousel-control-prev"
@@ -707,6 +629,7 @@ export default function LandingPage() {
                   </td>
                 </tr>
               ))}
+
             </tbody>
           </table>
         </div>
@@ -721,6 +644,7 @@ export default function LandingPage() {
           </nav>
         </div>
       </section>
+      
     </main>
   )
 }

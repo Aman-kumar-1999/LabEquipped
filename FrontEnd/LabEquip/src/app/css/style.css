@@ -628,6 +628,13 @@ body::before {
     --btn-bd: var(--color-primary);
     box-shadow: var(--shadow-glow)
 }
+.x-btn--neutral {
+    --btn-bg: var(--color-neutral);
+    --btn-fg: var(--text-inverse);
+    --btn-bd: var(--color-primary);
+    box-shadow: var(--shadow-glow)
+}
+
 
 .x-btn--secondary {
     --btn-bg: var(--secondary-50, #F7F9FF);
