@@ -8,7 +8,7 @@ spring:
   profiles:
     active: product
   openai:
-    api-key: ${OPENAI_API_KEY}
+    api-key: ${OPENAI_API_KEY} # before start or deploying set the environment variable OPENAI_API_KEY
     client:
       properties:
         model: gpt-5-nano # or your preferred model

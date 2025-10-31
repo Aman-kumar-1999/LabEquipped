@@ -24,7 +24,7 @@ export default function Chat({ onClose }: { onClose?: () => void }) {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5004/api/chatbot/query', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/chatbot/query`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
