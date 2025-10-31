@@ -1,38 +1,75 @@
 package com.labequiped.productservices.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.labequiped.productservices.entities.Product;
+import com.labequiped.productservices.helper.Helper;
 import com.labequiped.productservices.services.ProductService;
+import com.labequiped.productservices.services.ProductSuggestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/products")
+// @CrossOrigin(origins = "*")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
     @Autowired
+    private ProductSuggestionService suggestionService;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Product> createProduct(
-            @RequestPart("product") Product product,
-            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
-        return ResponseEntity.ok(productService.saveProduct(product, image));
+    //@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // @PostMapping
+    // public ResponseEntity<Product> createProduct(
+    //         @RequestPart("product") Product product
+    //         //,@RequestPart(value = "image", required = false) MultipartFile image
+    //         ) throws IOException {
+    //             MultipartFile image = null;
+    //             System.out.println("--------> product : " + product);
+    //             System.out.println("--------> image : " + image.getOriginalFilename() + ", size: " + image.getSize());
+    //     return ResponseEntity.ok(productService.saveProduct(product
+    //     , image
+    //     )
+
+    //     );
+    // }
+
+    @PostMapping
+    public ResponseEntity<?> createProductDataWithUserData(
+            @RequestParam("images") MultipartFile images,
+            @RequestParam("products") String product
+
+    ){
+        try {
+            Product prod = objectMapper.readValue(product, Product.class);
+            System.out.println("--------> product : " + prod);
+            System.out.println("--------> images : " + images.getOriginalFilename() + ", size: " + images.getSize());
+            return ResponseEntity.ok(productService.saveProduct(prod, images));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error processing request");
+        }
     }
 
 
@@ -67,6 +104,8 @@ public class ProductController {
                 .contentType(MediaType.IMAGE_JPEG) // ⚡ or detect dynamically
                 .body(imageData);
     }
+
+    
 
     // Pagination / list (cached)
 //    @GetMapping
@@ -144,6 +183,23 @@ public class ProductController {
         return ResponseEntity.ok(productService.productNameOrBrand(term, PageRequest.of(page, size)));
     }
 
+    @GetMapping("/suggestions")
+    public ResponseEntity<List<Product>> getPersonalizedSuggestions(
+            @RequestParam(required = false) String userId,
+            @RequestParam(defaultValue = "6") int limit
+    ) {
+        return ResponseEntity.ok(suggestionService.getPersonalizedSuggestions(userId, limit));
+    }
+
+    @PostMapping("/ai/suggestions")
+    public ResponseEntity<List<Map<String, Object>>> aiSuggestions(
+            @RequestBody(required = false) Map<String, Object> body,
+            @RequestParam(defaultValue = "6") int limit
+    ) {
+        List<Map<String, Object>> suggestions = suggestionService.getAiSuggestions(body, limit);
+        return ResponseEntity.ok(suggestions);
+    }
+
     @GetMapping("/brandName/{brandName}")
     public ResponseEntity<Page<Product>> byBrand(
             @PathVariable String brandName,
@@ -189,13 +245,45 @@ public class ProductController {
     }
 
     // upload (multipart)
+    // @PostMapping("/upload")
+    // public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file,
+    //                                           @RequestParam(value = "productId", required = false) String productId) {
+    //     // Example: save to filesystem or cloud storage. Here we mock:
+    //     String filename = file.getOriginalFilename();
+    //     // TODO: store file to storage, set product.imageName / imagePath and save product
+    //     return ResponseEntity.ok("Uploaded: " + filename);
+    // }
+
+    
+    // upload (multipart)
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file,
-                                              @RequestParam(value = "productId", required = false) String productId) {
-        // Example: save to filesystem or cloud storage. Here we mock:
-        String filename = file.getOriginalFilename();
-        // TODO: store file to storage, set product.imageName / imagePath and save product
-        return ResponseEntity.ok("Uploaded: " + filename);
+    public ResponseEntity<?> createProductDataWithExcel(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("products") String product
+
+    ){
+        Map<String,Object> map = new HashMap<>();
+        if (Helper.checkExcelFormat(file)) {
+            //true
+            Product user = null;
+            try {
+                user = objectMapper.readValue(product,Product.class);
+            } catch (JsonProcessingException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Request");
+                //throw new RuntimeException(e);
+
+            }   
+
+            map = productService.saveProductThroughExcel(file,user.getVendorEmail(), user.getVendorId(), user.getVendorName());
+
+            return ResponseEntity.ok(map);
+
+
+        }else {
+            map.put("STATUS","Kindly upload Excel file only");
+        }
+
+        return ResponseEntity.ok(map);
     }
 
     // userUpdate - partial update by user
@@ -213,11 +301,31 @@ public class ProductController {
     }
 
     // update full
+    // @PutMapping("/{productId}")
+    // public ResponseEntity<Product> update(@PathVariable String productId, @RequestBody Product product) {
+    //     product.setProductId(productId);
+    //     Product saved = productService.createOrUpdate(product);
+    //     return ResponseEntity.ok(saved);
+    // }
+
+
     @PutMapping("/{productId}")
-    public ResponseEntity<Product> update(@PathVariable String productId, @RequestBody Product product) {
-        product.setProductId(productId);
-        Product saved = productService.createOrUpdate(product);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<?> update(
+            @PathVariable String productId,
+            @RequestParam("images") MultipartFile images,
+            @RequestParam("products") String product
+
+    ){
+        try {
+            Product prod = objectMapper.readValue(product, Product.class);
+            prod.setProductId(productId);
+            System.out.println("--------> product : " + prod);
+            System.out.println("--------> images : " + images.getOriginalFilename() + ", size: " + images.getSize());
+            return ResponseEntity.ok(productService.saveProduct(prod, images));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error processing request");
+        }
     }
 
     // delete

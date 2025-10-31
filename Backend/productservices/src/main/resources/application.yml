@@ -7,9 +7,14 @@ spring:
     import: optional:configserver:http://localhost:50000  # test
   profiles:
     active: product
-
-
-
+  openai:
+    api-key: ${OPENAI_API_KEY}
+    client:
+      properties:
+        model: gpt-5-nano # or your preferred model
+        temperature: 0.7
+        max-tokens: 150
+        top-p: 1.0
 
 #To Gating the Product Service configuration file from local file
 #--------------------------------------------------------------------------------------------------

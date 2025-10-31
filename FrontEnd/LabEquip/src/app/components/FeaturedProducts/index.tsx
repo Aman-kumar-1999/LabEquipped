@@ -8,9 +8,10 @@ import spatulaImage from '@/assets/spatula-product.jpg';
 import { ProductCard } from '../ProductCart/ProductCard';
 
 import '@/app/css/product_card.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/Auth/store';
+import axiosInstance from '@/utils/axiosInstance';
 
 
 // Mock data matching API structure
@@ -118,6 +119,28 @@ interface FeaturedProductsProps {
 
 export const FeaturedProducts = ({ onAddToCart, onViewProduct, product }: FeaturedProductsProps) => {
     const [isHovered, setIsHovered] = useState(false);
+
+    const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!product?.productId) return;
+
+    axiosInstance
+      .get(`/products/${product.productId}/image`, 
+    //     {
+    //     responseType: "arraybuffer", // important!
+    //   }
+    )
+      .then((res) => {
+        const blob = new Blob([res.data], { type: "image/jpeg" });
+        const url = URL.createObjectURL(blob);
+        setImageSrc(url);
+      })
+      .catch((err) => {
+        console.error("Error loading image:", err);
+      });
+  }, [product?.productId]);
+
     // const { items, loading, error } = useSelector(
     // (state: RootState) => state.products
 
@@ -130,10 +153,10 @@ export const FeaturedProducts = ({ onAddToCart, onViewProduct, product }: Featur
                 </i>
 
                 <span className='overlap-discount'>
-                   
+
                     {/* Example: use the first product's discountPercentage */}
-                   {/* -{items[0]?.discountPercentage ?? mockProducts[0].discountPercentage}% */}
-                   -{product?.discountPercentage}%
+                    {/* -{items[0]?.discountPercentage ?? mockProducts[0].discountPercentage}% */}
+                    -{product?.discountPercentage}%
                 </span>
 
             </span>
@@ -143,10 +166,11 @@ export const FeaturedProducts = ({ onAddToCart, onViewProduct, product }: Featur
                 <i className="fa-solid fa-heart">
                 </i>
             </span>
-            <img style={{ width: '320px', height: '200px', padding: '0px', objectFit: 'cover' }}
-            // src="assets/featured_product_image_for_a_c_1_e61758df.jpg"
-            src={product?.imagePath}
-            alt="Microscope" className='card-image' />
+            <img 
+            style={{ width: '320px', height: '200px', padding: '0px', objectFit: 'cover' }}
+                src="assets/featured_product_image_for_a_c_1_e61758df.jpg"
+                // src={imageSrc ?? undefined}
+                alt="Microscope" className='card-image' />
 
 
             {/* Buttons on hover */}
@@ -181,16 +205,16 @@ export const FeaturedProducts = ({ onAddToCart, onViewProduct, product }: Featur
                 {/* <div className="desc">Advanced digital microscope with 1000x magnification, LED illumination, and USB connectivity.</div> */}
                 <div className="rating">
                     {/* ⭐⭐⭐⭐⭐ (4.8) */}
-              
+
                     ⭐⭐⭐⭐⭐ ({product?.productRating})
-                    
-                    </div>
-                <div>
-                    <span className="price">₹11,000</span>
-                    <span className="old-price">₹12,500</span>
+
                 </div>
-                <div className="save">Save ₹1,500</div>
-                <div className="stock">Stock: 8 units</div>
+                <div>
+                    <span className="price">₹{product?.natePriceWithDiscount}</span>
+                    <span className="old-price">₹{product?.TotalProductPrice}</span>
+                </div>
+                <div className="save">Save ₹{((product?.TotalProductPrice ?? 0) - (product?.natePriceWithDiscount ?? 0))}</div>
+                {/* <div className="stock">Stock: 8 units</div> */}
                 <span className="verified">Verified</span>
             </div>
 

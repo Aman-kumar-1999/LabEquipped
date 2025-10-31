@@ -41,7 +41,7 @@ public class ProductController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<?> createProductDataWithUserData(
             @RequestParam("file") MultipartFile file
-//            @RequestPart("products") String product
+           //@RequestPart("products") String product
 
     ){
         return ResponseEntity.ok("ok");
