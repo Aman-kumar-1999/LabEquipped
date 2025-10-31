@@ -13,7 +13,7 @@ type FetchProductsParams = {
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (
-    { page = 0, size = 2, sortBy = "productName", sortDir = "ASC" }: FetchProductsParams,
+    { page = 0, size = 3, sortBy = "productName", sortDir = "ASC" }: FetchProductsParams,
     thunkAPI
   ) => {
     try {

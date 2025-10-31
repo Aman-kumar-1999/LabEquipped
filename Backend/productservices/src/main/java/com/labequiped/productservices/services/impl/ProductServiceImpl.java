@@ -1,7 +1,7 @@
 package com.labequiped.productservices.services.impl;
 //import com.labequiped.productservice.service.kafka.KafkaProducerService;
 import com.labequiped.productservices.entities.Product;
-
+import com.labequiped.productservices.helper.Helper;
 import com.labequiped.productservices.repository.ProductRepository;
 import com.labequiped.productservices.services.ProductService;
 import com.mongodb.client.gridfs.GridFSBucket;
@@ -25,7 +25,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -72,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
     public Product createOrUpdate(Product product) {
         Product saved = productRepository.save(product);
         // Optionally publish an event so other services pick up changes
-//        kafkaProducerService.publish("productSaved", saved);
+        // kafkaProducerService.publish("productSaved", saved);
         return saved;
     }
 
@@ -80,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
         return GridFSBuckets.create(mongoDatabaseFactory.getMongoDatabase());
     }
 
+    @CachePut(value = CACHE, key = "#product.productId")
     public Product saveProduct(Product product, MultipartFile image) throws IOException {
         if (image != null && !image.isEmpty()) {
             GridFSBucket gridFSBucket = getGridFsBucket();
@@ -559,47 +564,47 @@ public class ProductServiceImpl implements ProductService {
 //        return products;
 //    }
 //
-//    public Map<String,Object> saveProductThroughExcel(MultipartFile file, String vendorEmail, String vendorId, String vendorName) {
-//
-//        Map<String,Object> map = new HashMap<>();
-//        try {
-//            map=Helper.convertExcelToListOfProduct(file.getInputStream());
-//
-//            List<Product> products = (List<Product>) map.get("PRODUCTS");
-//            //List<Product> products = Helper.convertExcelToListOfProduct(file.getInputStream());
-//            if(products!=null || products.isEmpty()) {
-//                List<Product> productList = products.stream().map(product -> {
-//
-//                    float discountPrice = (product.getDiscountPercentage() / 100) * product.getIndividualProductPrice();
-//                    float natePriceWithDiscount = product.getIndividualProductPrice() - discountPrice;
-//                    product.setNatePriceWithDiscount(natePriceWithDiscount);
-//                    float totalProductPrice;
-//                    totalProductPrice = natePriceWithDiscount * product.getProductQuantity();
-//                    product.setTotalProductPrice(totalProductPrice);
-//                    product.setDate(LocalDate.now());
-//                    product.setImageName("No");
-//                    product.setImagePath("No");
-//                    product.setVendorId(vendorId);
-//                    product.setVendorName(vendorName);
-//                    product.setVendorEmail(vendorEmail);
-//
-//                    return product;
-//                }).collect(Collectors.toList());
-//                this.productRepository.saveAll(productList);
-//                map.put("MSG","Product has been created Successful");
-//                map.put("STATUS","SUCCESS");
-//                map.put("PRODUCTS",productList);
-//            }else {
-//                map.put("STATUS","FAILED");
-//                map.put("MSG","Cause exception");
-//                map.put("PRODUCTS","NULL");
-//            }
-//
-//        } catch (Exception e) {
-//            map.put("STATUS","FAILED");
-//            map.put("PRODUCTS","NULL");
-//            e.printStackTrace();
-//        }
-//        return map;
-//    }
+   public Map<String,Object> saveProductThroughExcel(MultipartFile file, String vendorEmail, String vendorId, String vendorName) {
+
+       Map<String,Object> map = new HashMap<>();
+       try {
+           map=Helper.convertExcelToListOfProduct(file.getInputStream());
+
+           List<Product> products = (List<Product>) map.get("PRODUCTS");
+           //List<Product> products = Helper.convertExcelToListOfProduct(file.getInputStream());
+           if(products!=null || products.isEmpty()) {
+               List<Product> productList = products.stream().map(product -> {
+
+                   float discountPrice = (product.getDiscountPercentage() / 100) * product.getIndividualProductPrice();
+                   float natePriceWithDiscount = product.getIndividualProductPrice() - discountPrice;
+                   product.setNatePriceWithDiscount(natePriceWithDiscount);
+                   float totalProductPrice;
+                   totalProductPrice = natePriceWithDiscount * product.getProductQuantity();
+                   product.setTotalProductPrice(totalProductPrice);
+                   product.setCreatedAt(LocalDate.now());
+                   product.setImageName("No");
+                   product.setImagePath("No");
+                   product.setVendorId(vendorId);
+                   product.setVendorName(vendorName);
+                   product.setVendorEmail(vendorEmail);
+
+                   return product;
+               }).collect(Collectors.toList());
+               this.productRepository.saveAll(productList);
+               map.put("MSG","Product has been created Successful");
+               map.put("STATUS","SUCCESS");
+               map.put("PRODUCTS",productList);
+           }else {
+               map.put("STATUS","FAILED");
+               map.put("MSG","Cause exception");
+               map.put("PRODUCTS","NULL");
+           }
+
+       } catch (Exception e) {
+           map.put("STATUS","FAILED");
+           map.put("PRODUCTS","NULL");
+           e.printStackTrace();
+       }
+       return map;
+   }
 }

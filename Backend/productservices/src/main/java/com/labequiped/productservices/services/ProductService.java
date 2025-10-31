@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ProductService {
@@ -47,5 +48,8 @@ public interface ProductService {
     public long countAll();
 
     public long countByVendorId(String vendorId);
+
+    public Map<String,Object> saveProductThroughExcel(MultipartFile file, String vendorEmail, String vendorId, String vendorName);
+
 
 }

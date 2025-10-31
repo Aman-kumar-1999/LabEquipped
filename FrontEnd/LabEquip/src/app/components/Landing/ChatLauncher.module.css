@@ -1,0 +1,38 @@
+.stickyButton {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#0b5ed7,#0a58ca);
+  border: none;
+  box-shadow: 0 6px 18px rgba(11,94,215,0.24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  z-index: 1200;
+}
+
+.stickyButton:hover {
+  transform: translateY(-2px);
+}
+
+.panelWrapper {
+  position: fixed;
+  right: 20px;
+  bottom: 92px; /* above button */
+  z-index: 1200;
+}
+
+.panel {
+  width: 360px;
+  max-width: calc(100vw - 48px);
+  height: 520px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 12px 40px rgba(10, 20, 30, 0.2);
+}
