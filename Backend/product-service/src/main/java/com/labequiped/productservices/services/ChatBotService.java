@@ -1,14 +1,11 @@
 package com.labequiped.productservices.services;
 
-import org.springframework.ai.chat.client.ChatClient;
 // import org.springframework.ai.chat.ChatClient;
 // import org.springframework.ai.chat.ChatResponse;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.openai.client.OpenAIClient;
@@ -28,9 +25,11 @@ public class ChatBotService {
 
     // private final OpenAIClient client = OpenAIOkHttpClient.fromEnv();
 
+     // Replace with your actual API key
+
     private final OpenAIClient client;
 
-    public ChatBotService(@Value("${spring.openai.api-key}") String apiKey) {
+    public ChatBotService(@Value("${openai.api-key}") String apiKey) {
         this.client = OpenAIOkHttpClient.builder()
                 .apiKey(apiKey)
                 .build();
