@@ -58,6 +58,7 @@ services:
       - SPRING_PROFILES_ACTIVE=product
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:50000
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - OPENAI_API_KEY=${OPENAI_API_KEY} # before start or deploying set the environment variable OPENAI_API_KEY
     networks:
       - microservices-network
 
@@ -91,8 +92,8 @@ services:
 
   # 6️⃣ Oracle DB (Free Developer Edition)
   oracle-db:
-    image: gvenzl/oracle-free:latest
-    container_name: oracle-db
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-free
     ports:
       - "1521:1521"
     environment:
@@ -109,18 +110,23 @@ services:
     build: ./user-service
     container_name: user-service
     depends_on:
-      - service-registry
-      - config-server
-      - redis
-      - oracle-db
+      service-registry:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      oracle-db:
+        condition: service_started
     ports:
       - "5002:5002"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=user
       - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@//oracle-db:1521/FREEPDB1
       - SPRING_DATASOURCE_USERNAME=labequiped
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_REDIS_HOST=redis
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:50000
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
     networks:
       - microservices-network
