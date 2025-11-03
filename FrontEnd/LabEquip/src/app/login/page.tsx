@@ -95,8 +95,8 @@ export default function LoginPage() {
                         router.push("/admin/dashboard");
                     } else if (data!.user_details!.user!.roles[0]!.name === "VENDOR") {
                         router.push("/vendor/product");
-                    } else {
-                        router.push("/user/product");
+                    } else if (data!.user_details!.user!.roles[0]!.name === "BUYER") {
+                        router.push("/user/orders");
                     }
                 });
             })
@@ -284,7 +284,7 @@ export default function LoginPage() {
                                 </form>
                             </div>
                             {/* <!-- Test Credentials Panel --> */}
-                            <div className="x-card mt-4">
+                            {/* <div className="x-card mt-4">
                                 <div className="x-card__header">
                                     <h2 className="h5 mb-0">
                                         Test Credentials
@@ -440,7 +440,7 @@ export default function LoginPage() {
                                         Note: These are demo accounts for front-end validation and routing only. No real authentication is performed.
                                     </small>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

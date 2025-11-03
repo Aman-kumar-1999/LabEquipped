@@ -174,6 +174,7 @@ export default function CartPage() {
                                                         <img alt="Precision Pipette image" className="img-fluid rounded cart-thumb"
                                                            
                                                             // src={item.image} 
+                                                            src={item.image || `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${item.id}/image`}
                                                             
                                                             />
                                                     </div>

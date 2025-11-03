@@ -13,6 +13,8 @@ import com.openai.client.okhttp.OpenAIOkHttpClient;
 import com.openai.models.ChatModel;
 import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
+import org.springframework.beans.factory.annotation.Value;
+
 
 import java.util.ArrayList;
 import java.util.List;

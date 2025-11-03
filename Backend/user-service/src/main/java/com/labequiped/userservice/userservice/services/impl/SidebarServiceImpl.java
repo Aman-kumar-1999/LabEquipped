@@ -100,7 +100,7 @@ public class SidebarServiceImpl implements SidebarService {
 
     }
 
-    @CachePut(value = "sidebarCache", key = "#result.id")
+    // @CachePut(value = "sidebarCache", key = "#result.id")
     public SidebarItem createSidebarItem(SidebarItemRequest request) {
         SidebarItem item = new SidebarItem();
         item.setIcon(request.getIcon());
@@ -116,7 +116,7 @@ public class SidebarServiceImpl implements SidebarService {
         return sidebarRepository.save(item);
     }
 
-    @CachePut(value = "sidebarCache", key = "#result.id")
+    // @CachePut(value = "sidebarCache", key = "#result.id")
     public SidebarItem updateSidebarItem(Long id, SidebarItemRequest request) {
         SidebarItem item = sidebarRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sidebar item not found"));
@@ -134,7 +134,7 @@ public class SidebarServiceImpl implements SidebarService {
         return sidebarRepository.save(item);
     }
 
-    @CacheEvict(value = "sidebarCache", key = "#id")
+    // @CacheEvict(value = "sidebarCache", key = "#id")
     public void deleteSidebarItem(Long id) {
         sidebarRepository.deleteById(id);
     }
@@ -144,7 +144,7 @@ public class SidebarServiceImpl implements SidebarService {
                 .orElseThrow(() -> new RuntimeException("Sidebar item not found"));
     }
 
-    @Cacheable(value = "sidebarCache")
+    // @Cacheable(value = "sidebarCache")
     public List<SidebarItem> getAllSidebarItems() {
         return sidebarRepository.findAll();
     }

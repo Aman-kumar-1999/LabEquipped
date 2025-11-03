@@ -58,7 +58,7 @@ services:
       - SPRING_PROFILES_ACTIVE=product
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:50000
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
-      - OPENAI_API_KEY=${OPENAI_API_KEY} # before start or deploying set the environment variable OPENAI_API_KEY
+      - OPENAI_API_KEY= ${OPENAI_API_KEY} # before start or deploying set the environment variable OPENAI_API_KEY
     networks:
       - microservices-network
 
@@ -90,20 +90,43 @@ services:
     networks:
       - microservices-network
 
-  # 6️⃣ Oracle DB (Free Developer Edition)
-  oracle-db:
-    image: container-registry.oracle.com/database/free:latest
-    container_name: oracle-free
-    ports:
-      - "1521:1521"
+  mysql-db:
+    image: mysql
+    # :8.0
+    container_name: mysql-db-user
+    # restart: always
     environment:
-      - ORACLE_PASSWORD=root
-      - APP_USER=labequiped
-      - APP_USER_PASSWORD=root
+      MYSQL_ROOT_PASSWORD: root
+      # MYSQL_DATABASE: labequiped_db
+      # MYSQL_USER: labequiped
+      # MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
     volumes:
-      - oracle-data:/opt/oracle/oradata
+      - ./data:/var/lib/mysql
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - microservices-network
+
+  # 6️⃣ Oracle DB (Free Developer Edition)
+  # oracle-db:
+  #   image: container-registry.oracle.com/database/free:latest
+  #   container_name: oracle-free-product
+  #   ports:
+  #     - "1521:1521"
+  #   environment:
+  #     - ORACLE_PASSWORD=root
+  #     - APP_USER=labequiped
+  #     - APP_USER_PASSWORD=root
+  #   volumes:
+  #     - ./init-user.sql:/container-entrypoint-initdb.d/init-user.sql
+  #   healthcheck:
+  #     test: ["CMD", "tnsping", "FREEPDB1"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 10
+  #   networks:
+  #     - microservices-network
 
   # 7️⃣ User Service
   user-service:
@@ -116,16 +139,22 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-      oracle-db:
+      # oracle-db:
+      #   condition: service_healthy
+      mysql-db:
         condition: service_started
     ports:
       - "5002:5002"
     environment:
       - SPRING_PROFILES_ACTIVE=user
-      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@//oracle-db:1521/FREEPDB1
-      - SPRING_DATASOURCE_USERNAME=labequiped
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/labequiped_db?creatDatabaseIfNotExist=true
+      # jdbc:mysql://mysql-db:3306/labequiped_db?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      # jdbc:oracle:thin:@//oracle-db:1521/FREEPDB1
+      - SPRING_DATASOURCE_USERNAME=root
+      # labequiped
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_REDIS_HOST=redis
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:50000
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
     networks:
@@ -133,10 +162,11 @@ services:
 
 networks:
   microservices-network:
-    driver: bridge
+    # driver: bridge
 
 volumes:
-  oracle-data:
+  mysql-data:
+  # oracle-data:
 
 
 
