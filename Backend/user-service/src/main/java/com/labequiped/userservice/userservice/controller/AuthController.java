@@ -47,7 +47,7 @@ public class AuthController {
 
     @PostMapping("/login")
 //    @Cacheable(value = "loginCache", key = "#request['username']")
-    @CachePut(value = "loginCache", key = "#request['username']")
+//     @CachePut(value = "loginCache", key = "#request['username']")
     public <T> AuthResponse login(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         String password = request.get("password");
@@ -96,7 +96,7 @@ public class AuthController {
 
 
     @PutMapping("/login-update")
-    @CachePut(value = "loginCache", key = "#request['username']")
+        //     @CachePut(value = "loginCache", key = "#request['username']")
     public <T> AuthResponse updateLoginDetails(@RequestBody Map<String, String> request) {
         String username = request.get("username");
         String password = request.get("password");

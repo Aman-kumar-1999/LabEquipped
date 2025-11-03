@@ -1,0 +1,7 @@
+-- init-user.sql
+
+ALTER SESSION SET "_ORACLE_SCRIPT"=true;
+
+CREATE USER labequiped IDENTIFIED BY root;
+GRANT CONNECT, RESOURCE, DBA TO labequiped;
+ALTER USER labequiped QUOTA UNLIMITED ON USERS;
