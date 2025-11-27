@@ -663,6 +663,7 @@ import '../../css/home_page.css';
 import { useDispatch } from "react-redux";
 import { addItem, updateQuantity } from "@/app/Auth/cartSlice";
 import ChatLauncherClient from "./ChatLauncherClient";
+import axiosInstance from "@/utils/axiosInstance";
 
 
 
@@ -820,39 +821,45 @@ export default function LandingPage() {
   // ---- Fetch AI product suggestions ----
   useEffect(() => {
     let mounted = true;
-    async function loadAISuggestions() {
+
+    const loadAISuggestions = async () => {
       setAiLoading(true);
       setAiError(null);
+
       try {
-        const api = process.env.NEXT_PUBLIC_AI_SUGGESTIONS_API || '/api/ai/suggestions';
-        // include user info if available (optional)
+        const api =
+          process.env.NEXT_PUBLIC_AI_SUGGESTIONS_API || '/api/ai/suggestions';
+
+        // Include user info if available (optional)
         const userRaw = localStorage.getItem('user');
         const body = userRaw ? { user: JSON.parse(userRaw) } : {};
 
-        const res = await fetch(api, {
-          method: 'POST',
+        // 👇 Axios POST call
+        const res = await axiosInstance.post(api, body, {
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
         });
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(text || res.statusText);
-        }
-        const data = await res.json();
-        // expect array or { suggestions: [] }
-        const list = Array.isArray(data) ? data : data.suggestions || [];
+
+        // Axios automatically parses JSON, so data is ready
+        const data = res.data;
+
+        // Expect array or { suggestions: [] }
+        const list = Array.isArray(data)
+          ? data
+          : data.suggestions || [];
+
         if (mounted) setAiSuggestionsData(list.slice(0, 6));
       } catch (err: any) {
         console.error('AI suggestions load error', err);
         if (mounted) {
           setAiError(err?.message || 'Failed to fetch suggestions');
-          // fallback to lightweight mock suggestion objects (name only)
+
+          // fallback mock data
           setAiSuggestionsData(mockSuggestions.map((s) => ({ name: s })));
         }
       } finally {
         if (mounted) setAiLoading(false);
       }
-    }
+    };
     // load once on mount
     loadAISuggestions();
     return () => { mounted = false; };

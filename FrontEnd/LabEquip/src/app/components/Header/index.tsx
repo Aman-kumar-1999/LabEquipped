@@ -9,6 +9,7 @@ import { RootState, AppDispatch } from "../../Auth/store";
 import { isLoginedIn, logout } from "../../Auth/authSlice"; // ✅ logout action
 import Tooltip from "@mui/material/Tooltip";
 import { usePathname } from "next/dist/client/components/navigation";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function HeaderPage() {
   const pathname = usePathname();
@@ -130,6 +131,8 @@ export default function HeaderPage() {
 
             {/* Right side actions */}
             <div className="d-flex align-items-center gap-2">
+              {/* Theme Toggle */}
+              {/* <ThemeToggle /> */}
               {/* 🔹 If NOT logged in */}
               {!token && (
                 <div className="d-flex gap-2" >

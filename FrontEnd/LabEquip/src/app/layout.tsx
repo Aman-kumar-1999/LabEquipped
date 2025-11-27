@@ -5,6 +5,7 @@ import Script from "next/script";
 import { Provider } from "react-redux";
 import store from "./Auth/store";
 import './globals.css'
+import './css/dark-mode.css'
 // import Header from '@/app/components/Layout/Header'
 import HeaderPage from '@/app/components/Header'
 import FooterPage from '@/app/components/Footer'
@@ -13,6 +14,8 @@ import "sweetalert2/dist/sweetalert2.min.css";
 import './css/style.css';
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import LoadingProvider from '@/components/LoadingProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 // import ProtectedRoute from './components/ProtectedRoute';
 
 const font = Poppins({
@@ -53,14 +56,18 @@ export default function RootLayout({
       </head>
       <body className={`${font.className}`}>
         {/* <Header /> */}
-        <Provider  store={store} >
-          {/* <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN"]}> */}
-            <HeaderPage />
-            <div style={{ height: "80px" }}></div>
-            {children}
-          {/* </ProtectedRoute> */}
-          <FooterPage />
-        </Provider>
+        <ThemeProvider>
+          <Provider  store={store} >
+            <LoadingProvider>
+            {/* <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN"]}> */}
+              <HeaderPage />
+              <div style={{ height: "80px" }}></div>
+              {children}
+            {/* </ProtectedRoute> */}
+            </LoadingProvider>
+            <FooterPage />
+          </Provider>
+        </ThemeProvider>
 
       </body>
       <Script crossOrigin="anonymous" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
